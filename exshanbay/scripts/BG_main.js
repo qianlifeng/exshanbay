@@ -1,6 +1,7 @@
 var exshanbay = (function(){
     var grayColor = "#222";
     var redColor = "#F00";
+    var greenColor = "#29A329";
     var logined = null;
     
 
@@ -35,16 +36,23 @@ var exshanbay = (function(){
      */
     function startTodayStatisticsTimer(ms){
         setInterval(function(){
-            if(hasLogin()){
+            if(hasLogin(true)){
                 chrome.browserAction.setIcon({path: '../icon.png'})
                 ajax('http://www.shanbay.com/api/v1/review/?stats',function(json,text){
                     chrome.browserAction.setBadgeText({ text: json.num_left.toString()});
-                    chrome.browserAction.setTitle({title: '今日还需学习'+json.num_left+"个单词"});
+                    if(json.num_left == 0){
+                        chrome.browserAction.setBadgeBackgroundColor({color:greenColor});
+                        chrome.browserAction.setTitle({title: '恭喜，已经完成今日的学习'});
+                    }
+                    else{
+                        chrome.browserAction.setBadgeBackgroundColor({color:redColor});
+                        chrome.browserAction.setTitle({title: '今日还需学习'+json.num_left+"个单词"});
+                    }
                 });
             }                    
             else{
                 chrome.browserAction.setTitle({title: '请登录'});
-                //chrome.browserAction.setBadgeBackgroundColor({color:grayColor});
+                chrome.browserAction.setBadgeText({ text: ''});
                 chrome.browserAction.setIcon({path: '../icon_gray.png'})
                 //var canvas = document.getElementById('canvas');
                 //var drawContext = canvas.getContext('2d');
@@ -60,9 +68,32 @@ var exshanbay = (function(){
         },ms);
     }
 
+
+    /**
+     * @brief 用户点击图标的时候触发
+     *
+     * @return 无 
+     */
+    function onClickIcon(){
+        var url = 'http://www.shanbay.com/review/new/';
+        if(!hasLogin()){
+            url = 'http://www.shanbay.com/accounts/login/';
+        }
+        chrome.tabs.getAllInWindow(undefined, function(tabs) {
+            for (var i = 0, tab; tab = tabs[i]; i++) {
+              if (tab.url && tab.url == url) {
+                chrome.tabs.update(tab.id, {selected: true});
+                return;
+              }
+            }
+            chrome.tabs.create({url: url});
+        });
+    }
+
     return { 
         init:function(){
             hasLogin(true);      
+            chrome.browserAction.onClicked.addListener(onClickIcon);
         },         
         startMonitor:function(){
             startTodayStatisticsTimer(1000*10);

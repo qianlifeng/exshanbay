@@ -1,6 +1,6 @@
 ﻿{
   "name": "扇贝助手",
-  "version": "0.2",
+  "version": "0.21",
   "manifest_version": 2,
   "description": "一些扇贝网功能的增强",
   "browser_action": {
@@ -20,6 +20,7 @@
   ],
   "permissions": [
 	"http://*/*",
-	"https://*/*"],
+	"https://*/*",
+    "tabs"],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }
