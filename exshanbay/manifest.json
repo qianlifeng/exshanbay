@@ -1,14 +1,19 @@
 ﻿{
   "name": "扇贝助手",
-  "version": "0.21",
+  "version": "0.3",
   "manifest_version": 2,
-  "description": "一些扇贝网功能的增强",
+  "description": "对扇贝网功能的增强",
   "browser_action": {
     "default_icon": "icon_gray.png"
   },
   "background":{
 	"page":"bg.html"
   },
+   "icons": {
+      "128": "icon.png",
+      "16": "icon.png",
+      "48": "icon.png"
+   },  
   "content_scripts":[
   {
     "js":["scripts/CS_main.js"],
